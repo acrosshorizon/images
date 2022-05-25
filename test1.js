@@ -1,112 +1,185 @@
-class SuffixTree(object):
-    
-    class Node(object):
-        def __init__(self, lab):
-            self.lab = lab # label on path leading to this node
-            self.out = {}  # outgoing edges; maps characters to nodes
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>}
+None
+Index:  1
+run While-ELSE 1
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de22670>}
+None
+End big-while
+run While-IF 1
+child now is:  anana$
+k =  2 	j =  1
+k - j =  1 	s[k] =  n lab[k - j]=  n
+Update k
+k =  3 	j =  1
+k - j =  2 	s[k] =  a lab[k - j]=  a
+Update k
+k =  4 	j =  1
+k - j =  3 	s[k] =  n lab[k - j]=  n
+Update k
+k =  5 	j =  1
+k - j =  4 	s[k] =  a lab[k - j]=  a
+Update k
+k =  6 	j =  1
+k - j =  5 	s[k] =  $ lab[k - j]=  $
+Update k
+run While-IF 2
+cur now:  anana$
+Label:  anana$ 	 OUT:  {}
+None
+End big-while
+Label:  anana$ 	 OUT:  {}
+None
+End for
+Index:  2
+run While-ELSE 1
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de22670>, 'n': <__main__.SuffixTree.Node object at 0x10de22880>}
+None
+End big-while
+run While-IF 1
+child now is:  nana$
+k =  3 	j =  2
+k - j =  1 	s[k] =  a lab[k - j]=  a
+Update k
+k =  4 	j =  2
+k - j =  2 	s[k] =  n lab[k - j]=  n
+Update k
+k =  5 	j =  2
+k - j =  3 	s[k] =  a lab[k - j]=  a
+Update k
+k =  6 	j =  2
+k - j =  4 	s[k] =  $ lab[k - j]=  $
+Update k
+run While-IF 2
+cur now:  nana$
+Label:  nana$ 	 OUT:  {}
+None
+End big-while
+Label:  nana$ 	 OUT:  {}
+None
+End for
+Index:  3
+run While-IF 1
+child now is:  anana$
+k =  4 	j =  3
+k - j =  1 	s[k] =  n lab[k - j]=  n
+Update k
+k =  5 	j =  3
+k - j =  2 	s[k] =  a lab[k - j]=  a
+Update k
+run While-ELSE 2
+cExist:  n 	cNew:  $
+mid:  ana
+mid.out[cNew] =  $
+mid.out[cExist] =  anana$
+child.lab now is:  na$
+cur out[s[j]]:  a :  ana
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de228e0>, 'n': <__main__.SuffixTree.Node object at 0x10de22880>}
+None
+End big-while
+run While-IF 1
+child now is:  ana
+k =  4 	j =  3
+k - j =  1 	s[k] =  n lab[k - j]=  n
+Update k
+k =  5 	j =  3
+k - j =  2 	s[k] =  a lab[k - j]=  a
+Update k
+run While-IF 2
+cur now:  ana
+Label:  ana 	 OUT:  {'$': <__main__.SuffixTree.Node object at 0x10de22940>, 'n': <__main__.SuffixTree.Node object at 0x10de22670>}
+None
+End big-while
+run While-IF 1
+child now is:  $
+run While-IF 2
+cur now:  $
+Label:  $ 	 OUT:  {}
+None
+End big-while
+Label:  $ 	 OUT:  {}
+None
+End for
+Index:  4
+run While-IF 1
+child now is:  nana$
+k =  5 	j =  4
+k - j =  1 	s[k] =  a lab[k - j]=  a
+Update k
+run While-ELSE 2
+cExist:  n 	cNew:  $
+mid:  na
+mid.out[cNew] =  $
+mid.out[cExist] =  nana$
+child.lab now is:  na$
+cur out[s[j]]:  n :  na
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de228e0>, 'n': <__main__.SuffixTree.Node object at 0x10de229a0>}
+None
+End big-while
+run While-IF 1
+child now is:  na
+k =  5 	j =  4
+k - j =  1 	s[k] =  a lab[k - j]=  a
+Update k
+run While-IF 2
+cur now:  na
+Label:  na 	 OUT:  {'$': <__main__.SuffixTree.Node object at 0x10de22a00>, 'n': <__main__.SuffixTree.Node object at 0x10de22880>}
+None
+End big-while
+run While-IF 1
+child now is:  $
+run While-IF 2
+cur now:  $
+Label:  $ 	 OUT:  {}
+None
+End big-while
+Label:  $ 	 OUT:  {}
+None
+End for
+Index:  5
+run While-IF 1
+child now is:  ana
+run While-ELSE 2
+cExist:  n 	cNew:  $
+mid:  a
+mid.out[cNew] =  $
+mid.out[cExist] =  ana
+child.lab now is:  na
+cur out[s[j]]:  a :  a
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de22a60>, 'n': <__main__.SuffixTree.Node object at 0x10de229a0>}
+None
+End big-while
+run While-IF 1
+child now is:  a
+run While-IF 2
+cur now:  a
+Label:  a 	 OUT:  {'$': <__main__.SuffixTree.Node object at 0x10de22af0>, 'n': <__main__.SuffixTree.Node object at 0x10de228e0>}
+None
+End big-while
+run While-IF 1
+child now is:  $
+run While-IF 2
+cur now:  $
+Label:  $ 	 OUT:  {}
+None
+End big-while
+Label:  $ 	 OUT:  {}
+None
+End for
+Index:  6
+run While-ELSE 1
+Label:  * 	 OUT:  {'b': <__main__.SuffixTree.Node object at 0x10de22520>, 'a': <__main__.SuffixTree.Node object at 0x10de22a60>, 'n': <__main__.SuffixTree.Node object at 0x10de229a0>, '$': <__main__.SuffixTree.Node object at 0x10de22b20>}
+None
+End big-while
+run While-IF 1
+child now is:  $
+run While-IF 2
+cur now:  $
+Label:  $ 	 OUT:  {}
+None
+End big-while
+Label:  $ 	 OUT:  {}
+None
+End for
+False
 
-        def __str__(self):
-            print("Label: ", self.lab, "\t OUT: ", self.out)
-    
-    def __init__(self, s):
-        """ Make suffix tree, without suffix links, from s in quadratic time
-            and linear space """
-        s += '$'
-        self.root = self.Node('*')
-        self.root.out[s[0]] = self.Node(s) # trie for just longest suf
-        print(self.root.__str__())
-        # add the rest of the suffixes, from longest to shortest
-        for i in range(1, len(s)):
-            print("Index: ", i)
-            # start at root; we’ll walk down as far as we can go
-            cur = self.root
-            j = i
-            while j < len(s):
-                if s[j] in cur.out:
-                    print("run While-IF 1")
-                    child = cur.out[s[j]]
-                    lab = child.lab
-                    print("child now is: ", lab)
-                    # Walk along edge until we exhaust edge label or
-                    # until we mismatch
-                    k = j+1 
-                    while k-j < len(lab) and s[k] == lab[k-j]:
-                        print("k = ", k, "\tj = ", j)
-                        print("k - j = ", k - j, "\ts[k] = ", s[k], "lab[k - j]= ", lab[k-j])
-                        print("Update k")
-                        k += 1
-                    if k-j == len(lab):
-                        print("run While-IF 2")
-                        cur = child # we exhausted the edge
-                        j = k
-                        print("cur now: ", cur.lab)
-                    else:
-                        print("run While-ELSE 2")
-                        # we fell off in middle of edge
-                        #cExist = child node exist , cNew = new child node
-                        cExist, cNew = lab[k-j], s[k]
-                        print("cExist: ", cExist, "\tcNew: ", cNew)
-                        # create “mid”: new node bisecting edge
-                        # @delete: create new edge node for existing child
-                        #mid keep the whole branch to the current node branch need to split
-                        mid = self.Node(lab[:k-j])
-                        print("mid: ", lab[:k-j])
-                        #new branch add here
-                        mid.out[cNew] = self.Node(s[k:])
-                        print("mid.out[cNew] = ", s[k:])
-                        # @delete: original child becomes mid’s child
-                        # existing branch is split here
-                        mid.out[cExist] = child
-                        print("mid.out[cExist] = ", child.lab)
-                        # assign new label for existing split branch
-                        child.lab = lab[k-j:]
-                        print("child.lab now is: ", lab[k-j:])
-                        # assign new label for parent branch when it is split by existing branch with new branch
-                        cur.out[s[j]] = mid
-                        print("cur out[s[j]]: ", s[j], ": ", mid.lab)
-                else:
-                    print("run While-ELSE 1")
-                    # Fell off tree at a node: make new edge hanging off it
-                    cur.out[s[j]] = self.Node(s[j:])
-                print(cur.__str__())
-                print("End big-while")
-            print(cur.__str__())
-            print("End for")
-
-
-    def followPath(self, s):
-        """ Follow path given by s.  If we fall off tree, return None.  If we
-            finish mid-edge, return (node, offset) where 'node' is child and
-            'offset' is label offset.  If we finish on a node, return (node,
-            None). """
-        cur = self.root
-        i = 0
-        while i < len(s):
-            c = s[i]
-            if c not in cur.out:
-                return (None, None) # fell off at a node
-            child = cur.out[s[i]]
-            lab = child.lab
-            j = i+1
-            while j-i < len(lab) and j < len(s) and s[j] == lab[j-i]:
-                j += 1
-            if j-i == len(lab):
-                cur = child # exhausted edge
-                i = j
-            elif j == len(s):
-                return (child, j-i) # exhausted query string in middle of edge
-            else:
-                return (None, None) # fell off in the middle of the edge
-        return (cur, None) # exhausted query string at internal node
-
-    def hasSubstring(self, s):
-        """ Return true iff s appears as a substring """
-        node, off = self.followPath(s)
-        return node is not None
-
-
-
-
-if __name__ == '__main__':
-    tree = SuffixTree("banana")
-    print(tree.hasSubstring("e"))
+Process finished with exit code 0
