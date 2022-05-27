@@ -8,14 +8,36 @@ def allocate(preferences, sysadmins_per_night, max_unwanted_shifts, min_shifts):
     total_shift_taken = [0] * len(preferences[0])
     numdays = len(preferences)
     numSysAdmins = len(preferences[0])
+    table = []
+    for i in range(len(preferences)):
+        temp = []
+        for j in range(len(preferences[0])):
+            temp.append(0)
+        table.append(temp)
 
     generateGraph(graph, preferences, sysadmins_per_night, max_unwanted_shifts)
+    #for x in graph:print(x, ", ")print("######################################################")
+
+    maxFlow = FordFulkerson(graph, 0, len(graph[0]) - 1, max_unwanted_shifts, table)
+    #print(maxFlow)
+    #print("++++++++++++++++++++++")
+    #for item in result:print(item)
+    #print("++++++++++++++++++++++")
+    print("Max flow expected: ", numdays * sysadmins_per_night)
+    print("Max flow result: ",maxFlow)
+    print("numdays: ", numdays)
+    print("sysadmins_per_night: ", sysadmins_per_night)
     for x in graph:
         print(x, ", ")
     print("######################################################")
+    
 
-    ans = FordFulkerson(graph, 0, len(graph[0]) - 1, max_unwanted_shifts, min_shifts)
-    print(ans)
+    if check(max_unwanted_shifts, min_shifts) and maxFlow >= numdays * sysadmins_per_night:
+
+        return table
+    else:
+        return None
+
 
 
 def generateGraph(graph, preferences, sysadmins_per_night, max_unwanted_shifts):
@@ -49,7 +71,7 @@ def generateGraph(graph, preferences, sysadmins_per_night, max_unwanted_shifts):
                 temp = 1
             graph[i][j] = temp
 
-def BFS(graph, s, t, parent, max_unwanted_shifts, min_shifts):
+def BFS(graph, s, t, parent, max_unwanted_shifts):
     global unwanted_shifts_taken, total_shift_taken, numdays, numSysAdmins
     visited = [False] * len(graph[0])
     q = []
@@ -60,21 +82,44 @@ def BFS(graph, s, t, parent, max_unwanted_shifts, min_shifts):
         x = q[0]
         q.pop(0)
         for y in range(len(graph[0])):
+            if y > 0 and y <= numSysAdmins :
+                #print("From BFS: RUN IF")
+                if visited[y] == False and graph[x][y] > 0 and unwanted_shifts_taken[y - 1] < max_unwanted_shifts:
+                    #print("### Run satisfied ### \t node: ", y, "\ton day: ", x)
+                    visited[y] = True
+                    parent[y] = x
+                    q.append(y)
+            elif y > numSysAdmins and y < len(graph[0]) - numdays - 1:
+                #print("From BFS: RUN ELIF")
+                if visited[y] == False and graph[x][y] > 0 and unwanted_shifts_taken[y - numSysAdmins - 1] < max_unwanted_shifts:
+                    #print("### Run satisfied ###")
+                    #print("### Run satisfied ### \t node: ", y, "\ton day: ", x)
+                    visited[y] = True
+                    parent[y] = x
+                    q.append(y)
+            else:
+                #print("From BFS: RUN ELSE")
+                if visited[y] == False and graph[x][y] > 0:
+                    #print("### Run satisfied ###")
+                    visited[y] = True
+                    parent[y] = x
+                    q.append(y)
+
+            '''
             if visited[y] == False and graph[x][y] > 0:
                 visited[y] = True
                 parent[y] = x
                 q.append(y)
+            '''
 
-    for x in graph:
-        print(x)
-    print("--------------------------------------------")
+    #for x in graph:print(x)print("--------------------------------------------")
     return visited[t] == True
 
-def FordFulkerson(graph, s ,t, max_unwanted_shifts, min_shifts):
+def FordFulkerson(graph, s ,t, max_unwanted_shifts, table):
     parent = [-1] * len(graph[0])
     sum = 0
     global unwanted_shifts_taken, total_shift_taken, numdays, numSysAdmins
-    while BFS(graph, s, t, parent, max_unwanted_shifts, min_shifts):
+    while BFS(graph, s, t, parent, max_unwanted_shifts):
         temp = math.inf
         y = t
         while y != s:
@@ -84,10 +129,16 @@ def FordFulkerson(graph, s ,t, max_unwanted_shifts, min_shifts):
                 if x <= numSysAdmins:
                     #print("index preferred: ", x, "\ton day: ", y)
                     total_shift_taken[x - 1] += 1
+                    appendResult(x,y,table)
+                    preNode = x
+                    #print(result)
                 if x > numSysAdmins and x < 2 * numSysAdmins + 1:
                     #print("index unwanted: ", x, "\ton day: ", y)
                     unwanted_shifts_taken[x - (2 * numSysAdmins) - 1] += 1
                     total_shift_taken[x - (2 * numSysAdmins) - 1] += 1
+                    appendResult(x,y,table)
+                    preNode = x
+                    #print(result)
 
             y = parent[y]
 
@@ -99,22 +150,68 @@ def FordFulkerson(graph, s ,t, max_unwanted_shifts, min_shifts):
             y = parent[y]
 
         sum += temp
-    print("---------------------------------------------------------")
-    for x in graph:
-        print(x)
+    #print("---------------------------------------------------------")
+    #for x in graph:print(x)
     return sum
 
+#x: sysadmins number, y: day
+def appendResult(x,y,table):
+    global unwanted_shifts_taken, total_shift_taken, numdays, numSysAdmins
+    if x > 0 and x <= numSysAdmins:
+        table[y - (2 * numSysAdmins) - 1][x - 1] = 1
+    if x > numSysAdmins and x <= 2 * numSysAdmins:
+        table[y - (2 * numSysAdmins) - 1][x - numSysAdmins - 1] = 1
 
-
-
+def check(max_unwanted_shifts, min_shifts):
+    global unwanted_shifts_taken, total_shift_taken, numdays, numSysAdmins
+    for x in unwanted_shifts_taken:
+        if x > max_unwanted_shifts:
+            print("1.Not passed Check()")
+            print(x)
+            return False
+    for y in total_shift_taken:
+        if y < min_shifts:
+            print("2.Not passed Check()")
+            return False
+    print("Check() satisfied")
+    return True
 
 
 if __name__ == '__main__':
-    preferences = [[0, 1, 0], [1, 0, 1], [0, 0, 1], [1, 1, 0]]
-    sysadmins_per_night = 2
-    max_unwanted_shifts = 2
-    min_shifts = 1
-    allocate(preferences, sysadmins_per_night, max_unwanted_shifts, min_shifts)
+    preferences = [[0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+                        [1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
+                        [0, 1, 1, 0, 0, 0, 1, 0, 0, 1],
+                        [1, 0, 0, 1, 1, 0, 0, 1, 0, 1],
+                        [0, 1, 1, 1, 0, 1, 0, 0, 1, 0],
+                        [0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+                        [0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+                        [0, 1, 1, 0, 0, 1, 0, 0, 1, 0],
+                        [0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+                        [0, 0, 1, 0, 0, 1, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+                        [0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+                        [0, 1, 0, 1, 0, 0, 0, 1, 1, 1],
+                        [0, 0, 1, 0, 1, 1, 1, 1, 1, 1],
+                        [1, 0, 1, 0, 1, 0, 1, 0, 0, 1],
+                        [0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                        [1, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+                        [1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+                        [1, 0, 0, 0, 1, 0, 0, 0, 1, 1],
+                        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+                        [0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+                        [1, 1, 1, 0, 0, 1, 1, 1, 0, 1],
+                        [1, 0, 1, 1, 1, 1, 1, 0, 0, 1],
+                        [0, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+                        [0, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+                        [1, 0, 0, 0, 1, 0, 0, 1, 1, 0],
+                        [1, 0, 0, 1, 0, 1, 1, 1, 1, 0],
+                        [1, 0, 0, 0, 1, 0, 0, 1, 1, 0],
+                        [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+                        [1, 0, 0, 0, 0, 1, 0, 1, 0, 0]]
+    sysadmins_per_night = 7
+    max_unwanted_shifts = 10
+    min_shifts = 5
+    print(allocate(preferences, sysadmins_per_night, max_unwanted_shifts, min_shifts))
     global unwanted_shifts_taken, total_shift_taken
     print("Total: ", total_shift_taken)
     print("Shift: ", unwanted_shifts_taken)
