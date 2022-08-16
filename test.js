@@ -1,154 +1,85 @@
+/*****************************************************************
+ * Exercise 2: implement the map function for the cons list below
+ */
 
- 
-const int MAXN = 105000;
-const int inf = 1000 * 1000 * 1000;
- 
-struct node {
-    int from, to, link;
-    int child, bro;
-};
- 
-int n, len, nk, pos;
-string s;
-vector <node> tree;
-int active_e, active_node, active_len, needSL, rem;
- 
-int add_node(int from, int to) {
-    nk++;
-    node temp; 
-    temp.from = from; temp.to = to; temp.link = 0;
-    temp.child = 0; temp.bro = 0;
-    tree.push_back(temp);
-    return nk;
+/**
+ * A ConsList is either a function created by cons, or empty (null)
+ */
+type ConsList<T> = Cons<T> | null;
+
+/**
+ * The return type of the cons function, is itself a function
+ * which can be given a selector function to pull out either the head or rest
+ */
+type Cons<T> = (selector: Selector<T>) => T | ConsList<T>;
+
+/**
+ * a selector will return either the head or rest
+ */
+type Selector<T> = (head: T, rest: ConsList<T>) => T | ConsList<T>;
+
+/**
+ * cons "constructs" a list node, if no second argument is specified it is the last node in the list
+ */
+function cons<T>(head: T, rest: ConsList<T>): Cons<T> {
+  return (selector: Selector<T>) => selector(head, rest);
 }
- 
-void st_init() {
-    nk = -1;
-    pos = -1;
-    rem = active_e = active_len = needSL = 0;
-    active_node = root;
-    add_node(-1, -1);
-    add_node(-1, -1);
+
+/**
+ * head selector, returns the first element in the list
+ * @param list is a Cons (note, not an empty ConsList)
+ */
+function head<T>(list: Cons<T>): T {
+  if (!list) throw new TypeError("list is null");
+  return <T>list((head, rest?) => head);
 }
- 
-void addSL(int v) {
-    if (needSL) tree[needSL].link = v;
-    needSL = v;
+
+/**
+ * rest selector, everything but the head
+ * @param list is a Cons (note, not an empty ConsList)
+ */
+function rest<T>(list: Cons<T>): ConsList<T> {
+  if (!list) throw new TypeError("list is null");
+  return <Cons<T>>list((head, rest?) => rest);
 }
- 
-int find_edge(int v, int c) {
-    v = tree[v].child;
-    while (v) {
-        if (s[tree[v].from] == c)
-            return v;
-        v = tree[v].bro;
-    }
-    return 0;
+
+/**
+ * Use this as an example for other functions!
+ * @param f Function to use for each element
+ * @param list Cons list
+ */
+function forEach<T>(f: (_: T) => void, list: ConsList<T>): void {
+  if (list) {
+    f(head(list));
+    forEach(f, rest(list));
+  }
 }
- 
-void insert_edge(int v, int to) {
-    int temp = tree[v].child; 
-    tree[v].child = to; 
-    tree[to].bro = temp;
+
+/**
+ * Implement this function! Also, complete this documentation (see forEach).
+ */
+function map<T, V>(f: (_: T) => V, l: ConsList<T>): ConsList<V> {
+  return IMPLEMENT_THIS;
 }
- 
-void change_edge(int v, int c, int to) {
-    int next = tree[v].child;
-    if (s[tree[next].from] == c) {
-        tree[v].child = to;
-        tree[to].bro = tree[next].bro;
-        return;
-    }
-    v = next;
-    while (v) {
-        next = tree[v].bro;
-        if (s[tree[next].from] == c) {
-            tree[v].bro = to;
-            tree[to].bro = tree[next].bro;
-            return;
-        }
-        v = next;
-    }
-}
- 
-bool walk_down(int v) {
-    int elen = tree[v].to - tree[v].from;
-    if (tree[v].from + active_len >= tree[v].to) {
-        active_node = v;
-        active_len -= elen;
-        active_e += elen;
-        return true;
-    }
-    return false;
-}
- 
-int active_edge() {
-    return s[active_e];
-}
- 
-void st_insert(int c) {
-    pos++;
-    needSL = 0; rem++; 
-    while (rem) {
-        if (active_len == 0) active_e = pos;
-        int go = find_edge(active_node, active_edge());
-        if (go == 0) {
-            int leaf = add_node(pos, inf);
-            insert_edge(active_node, leaf);
-            addSL(active_node);
-        }
-        else {
-            if (walk_down(go)) 
-                continue;
-            if (s[tree[go].from + active_len] == c) {
-                active_len++;
-                addSL(active_node);
-                break;
-            }
-            int split = add_node(tree[go].from, tree[go].from + active_len);
-            int leaf = add_node(pos, inf);
- 
-            change_edge(active_node, active_edge(), split);
-            insert_edge(split, go);
-            insert_edge(split, leaf);
- 
-            tree[go].from = tree[go].from + active_len;
- 
-            addSL(split);
-        }
-        rem--;
-        if (active_node == root && active_len) {
-            active_len--;
-            active_e = pos - rem + 1;
-        }
-        else {
-            if (tree[active_node].link) 
-                active_node = tree[active_node].link;
-            else
-                active_node = root;
-        }
-    }
-}
- 
-int count_diff() {
-    int result = 0;
-    for (int i = 2; i <= nk; i++)
-        result += min(tree[i].to, n) - tree[i].from;
-    return result;
-}
- 
-int main() {
-    freopen("substr.in","r",stdin);
-    freopen("substr.out","w",stdout);
- 
-    getline(cin, s);
-    n = (int) s.length();
- 
-    st_init();
-    for (int i = 0; i < n; i++)
-        st_insert(s[i]);
- 
-    printf("%d", count_diff());
- 
-    return 0;
-}
+
+/*
+Requirements: 
++ First map with id function or I-Combinator 
+Example: 
+let list123 = cons(1, cons(2, cons(3, null)));
+let idList = map((v) => v, list123);
+expect(head(list123)).to.equal(head(idList));
+expect(head(rest(list123))).to.equal(head(rest(idList)));
+expect(head(rest(rest(list123)))).to.equal(head(rest(rest(idList))));
+
+Then map with inc function
+Example:
+let list123 = cons(1, cons(2, cons(3, null)));
+const inc = (n) => n + 1;
+let newList = map(inc, list123);
+const predicate = (before, after) => before === after - 1;
+expect(predicate(head(list123), head(newList))).is.true;
+expect(predicate(head(rest(list123)), head(rest(newList))));
+expect(predicate(head(rest(rest(list123))), head(rest(rest(newList)))));
+expect(rest(rest(rest(newList)))).is.equal(null);
+*/
